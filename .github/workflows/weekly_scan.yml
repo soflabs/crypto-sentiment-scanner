@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,11 +23,6 @@ jobs:
 
       - name: Dependencies installeren
         run: pip install anthropic
-
-      - name: Debug key
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: echo "Key prefix ${ANTHROPIC_API_KEY:0:20}"
 
       - name: Scan uitvoeren
         env:
