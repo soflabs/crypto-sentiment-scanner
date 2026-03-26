@@ -1,5 +1,5 @@
 """
-BlackRock Digital Assets Intelligence Platform
+Camelot Finance Digital Assets Intelligence Platform
 Wekelijkse Crypto Sentiment & Marktanalyse
 Institutioneel niveau — X/Twitter sentiment analyse
 """
@@ -41,7 +41,7 @@ def score_to_label(score):
 
 def analyse_coin(client, coin):
     print(f"  Analyseer {coin['full']}...")
-    prompt = f"""Je bent een senior Digital Assets Portfolio Manager bij BlackRock met 15 jaar ervaring in institutionele crypto-investeringen. Je taak is een diepgaande, professionele wekelijkse sentimentanalyse te leveren van {coin['full']} op basis van X (Twitter) en bredere marktsentimenten.
+    prompt = f"""Je bent een senior Digital Assets Portfolio Manager bij Camelot Finance met 15 jaar ervaring in institutionele crypto-investeringen. Je taak is een diepgaande, professionele wekelijkse sentimentanalyse te leveren van {coin['full']} op basis van X (Twitter) en bredere marktsentimenten.
 
 Analyseer de volgende dimensies exhaustief:
 
@@ -68,7 +68,7 @@ Analyseer de volgende dimensies exhaustief:
    - Catalyst events die sentiment kunnen beinvloeden
    - Technische niveaus die sentiment kunnen draaien
 
-5. BLACKROCK INSTITUTIONEEL STANDPUNT
+5. Camelot Finance INSTITUTIONEEL STANDPUNT
    - Positionering advies (overweight/neutral/underweight) met rationale
    - Tijdshorizon: 1 week outlook
    - Confidence level in de analyse
@@ -88,7 +88,7 @@ Geef je analyse UITSLUITEND als JSON terug zonder enige tekst erbuiten:
   "macro_context": "<2-3 zinnen macro en markt context>",
   "key_risks": ["<risico 1>", "<risico 2>", "<risico 3>"],
   "key_catalysts": ["<catalyst 1>", "<catalyst 2>", "<catalyst 3>"],
-  "blackrock_view": "<2-3 zinnen BlackRock institutioneel standpunt en positionering rationale>",
+  "Camelot Finance_view": "<2-3 zinnen Camelot Finance institutioneel standpunt en positionering rationale>",
   "price_sentiment_levels": {{
     "strong_support_narrative": "<niveau of zone met uitleg>",
     "strong_resistance_narrative": "<niveau of zone met uitleg>"
@@ -265,10 +265,10 @@ def build_html_report(results, history):
             <div style="font-size:12px;color:#444;line-height:1.6">{r.get("institutional_signals","")}</div>
           </div>
 
-          <!-- BlackRock View -->
+          <!-- Camelot Finance View -->
           <div style="background:#1a1a2e;border:2px solid #C0A000;border-radius:8px;padding:14px">
-            <div style="font-size:10px;color:#C0A000;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">BlackRock Institutioneel Standpunt</div>
-            <div style="font-size:13px;color:#fff;line-height:1.7">{r.get("blackrock_view","")}</div>
+            <div style="font-size:10px;color:#C0A000;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px">Camelot Finance Institutioneel Standpunt</div>
+            <div style="font-size:13px;color:#fff;line-height:1.7">{r.get("Camelot Finance_view","")}</div>
           </div>
 
           <!-- Week outlook -->
@@ -296,7 +296,7 @@ def build_html_report(results, history):
 
     return f"""<!DOCTYPE html>
 <html lang="nl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BlackRock Digital Assets Intelligence — Week {week}/{year}</title></head>
+<title>Camelot Finance Digital Assets Intelligence — Week {week}/{year}</title></head>
 <body style="margin:0;padding:0;background:#f0f2f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif">
 <div style="max-width:680px;margin:0 auto;padding:20px">
 
@@ -304,7 +304,7 @@ def build_html_report(results, history):
   <div style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);border-radius:14px;padding:28px;margin-bottom:24px;color:#fff">
     <div style="display:flex;justify-content:space-between;align-items:flex-start">
       <div>
-        <div style="font-size:11px;color:#C0A000;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:4px">BlackRock Digital Assets Intelligence</div>
+        <div style="font-size:11px;color:#C0A000;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:4px">Camelot Finance Digital Assets Intelligence</div>
         <div style="font-size:24px;font-weight:800;margin-bottom:4px">Crypto Sentiment Report</div>
         <div style="font-size:13px;color:#aaa">Week {week} · {today} · Institutioneel Niveau</div>
       </div>
@@ -354,7 +354,7 @@ def build_html_report(results, history):
   </div>
 
   <div style="text-align:center;font-size:10px;color:#aaa;padding:12px;line-height:1.6">
-    BlackRock Digital Assets Intelligence Platform · Week {week}/{year}<br>
+    Camelot Finance Digital Assets Intelligence Platform · Week {week}/{year}<br>
     Dit rapport is uitsluitend bedoeld voor institutionele beleggers. Geen financieel advies.<br>
     Gegenereerd op {today} om 08:00 CET
   </div>
@@ -374,7 +374,7 @@ def send_email(html, results):
     scores = " | ".join(f"{r['symbol']}: {r['score']} ({r.get('positioning','?')})" for r in results)
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = f"BlackRock Digital Assets Intelligence — Week {week}/{year} | {scores}"
+    msg["Subject"] = f"Camelot Finance Digital Assets Intelligence — Week {week}/{year} | {scores}"
     msg["From"]    = EMAIL_FROM
     msg["To"]      = EMAIL_TO
     msg.attach(MIMEText(html, "html", "utf-8"))
@@ -387,7 +387,7 @@ def send_email(html, results):
 
 
 def main():
-    print(f"BlackRock Digital Assets Intelligence — {datetime.date.today()}")
+    print(f"Camelot Finance Digital Assets Intelligence — {datetime.date.today()}")
     if not ANTHROPIC_API_KEY:
         raise ValueError("ANTHROPIC_API_KEY niet ingesteld!")
 
