@@ -6,6 +6,7 @@ Institutioneel niveau — realtime Fear & Greed + X/Twitter sentiment
 
 import os
 import json
+import urllib.request
 import datetime
 import smtplib
 import urllib.request
@@ -49,6 +50,43 @@ def get_fear_greed_index():
     except Exception as e:
         print(f"  Fear & Greed API fout: {e}")
         return None
+
+
+def get_fear_greed_index():
+    """Haal de echte Crypto Fear & Greed Index op van alternative.me API"""
+    try:
+        url = "https://api.alternative.me/fng/?limit=2"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=10) as r:
+            data = json.loads(r.read())
+        current = data["data"][0]
+        previous = data["data"][1]
+        fng_value = int(current["value"])
+        fng_label = current["value_classification"]
+        fng_prev  = int(previous["value"])
+        fng_change = fng_value - fng_prev
+        direction = "stijgend" if fng_change > 0 else "dalend" if fng_change < 0 else "stabiel"
+        print(f"  Fear & Greed Index: {fng_value} ({fng_label}) — {direction} t.o.v. gisteren ({fng_prev})")
+        return fng_value, fng_label, fng_prev, direction
+    except Exception as e:
+        print(f"  Waarschuwing: Fear & Greed Index niet beschikbaar: {e}")
+        return None, None, None, None
+
+
+def get_fear_greed_index():
+    """Haal de echte Fear & Greed Index op van alternative.me API"""
+    try:
+        url = "https://api.alternative.me/fng/?limit=2"
+        with urllib.request.urlopen(url, timeout=10) as r:
+            data = json.loads(r.read())
+        today_val   = int(data["data"][0]["value"])
+        today_label = data["data"][0]["value_classification"]
+        prev_val    = int(data["data"][1]["value"])
+        prev_label  = data["data"][1]["value_classification"]
+        return today_val, today_label, prev_val, prev_label
+    except Exception as e:
+        print(f"  Fear & Greed API fout: {e}")
+        return None, None, None, None
 
 
 def score_to_label(score):
@@ -449,7 +487,9 @@ def main():
     history = load_history()
     results = []
 
+    today_str = datetime.date.today().isoformat()
     for coin in COINS:
+        coin['_today'] = today_str
         try:
             result = analyse_coin(client, coin, fng)
             label, _ = score_to_label(result["score"])
