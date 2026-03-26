@@ -12,7 +12,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
 
-COINS = ["Bitcoin (BTC)", "Ethereum (ETH)", "Solana (SOL)"]
+COINS = ["Bitcoin (BTC)", "Ethereum (ETH)", "XRP (XRP)", "Hedera (HBAR)"]
 HISTORY_FILE = "sentiment_history.json"
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
