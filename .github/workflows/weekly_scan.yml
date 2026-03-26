@@ -22,6 +22,11 @@ jobs:
       - name: Dependencies installeren
         run: pip install anthropic
 
+      - name: Debug key
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: echo "Key starts with: ${ANTHROPIC_API_KEY:0:15}"
+
       - name: Scan uitvoeren
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
