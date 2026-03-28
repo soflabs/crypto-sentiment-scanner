@@ -61,82 +61,61 @@ def analyse_coin(client, coin, fng_score, fng_label):
     print(f"  Analyseer {coin['full']}...")
 
     if fng_score:
-        fng_anchor = f"""
-VERPLICHTE ANKER DATA — NEGEER DIT NIET:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-• Realtime Crypto Fear & Greed Index (alternative.me): {fng_score}/100 — {fng_label}
-• Huidige datum: {datetime.date.today()}
-• Je sentiment score MOET realistisch aansluiten bij deze Fear & Greed Index.
-• Als de index Fear of Extreme Fear aangeeft (< 40), geef dan EEN score onder 45.
-• Als de index Greed aangeeft (> 60), geef dan een score boven 55.
-• Wijk MAXIMAAL 15 punten af van de Fear & Greed Index tenzij er zeer sterke
-  coin-specifieke redenen zijn (vermeld deze dan expliciet).
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"""
+        fng_anchor = (
+            "\nVERPLICHTE ANKER DATA — NEGEER DIT NIET:\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            f"• Realtime Crypto Fear & Greed Index (alternative.me): {fng_score}/100 — {fng_label}\n"
+            f"• Huidige datum: {datetime.date.today()}\n"
+            "• Je sentiment score MOET realistisch aansluiten bij deze Fear & Greed Index.\n"
+            "• Als de index Fear of Extreme Fear aangeeft (< 40), geef dan een score onder 45.\n"
+            "• Als de index Greed aangeeft (> 60), geef dan een score boven 55.\n"
+            "• Wijk MAXIMAAL 15 punten af van de Fear & Greed Index tenzij er zeer sterke\n"
+            "  coin-specifieke redenen zijn (vermeld deze dan expliciet).\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        )
     else:
-        fng_anchor = f"""
-ANKER DATA:
-• Huidige datum: {datetime.date.today()}
-• Fear & Greed data niet beschikbaar — wees conservatief en realistisch.
-• Baseer je score op de meest recente marktomstandigheden die je kent."""
+        fng_anchor = (
+            "\nANKER DATA:\n"
+            f"• Huidige datum: {datetime.date.today()}\n"
+            "• Fear & Greed data niet beschikbaar — wees conservatief en realistisch."
+        )
 
-    prompt = f"""Je bent een senior Digital Assets Portfolio Manager bij Camelot Finance met 15 jaar ervaring in institutionele crypto-investeringen. Je taak is een diepgaande, professionele wekelijkse sentimentanalyse te leveren van {coin['full']}.
-
-{fng_anchor}
-
-Analyseer de volgende dimensies exhaustief:
-
-1. SOCIAL SENTIMENT (X/Twitter)
-   - Volume en toon van berichten (bullish vs bearish ratio)
-   - Sentiment van key opinion leaders, whale accounts, analysts
-   - Trending hashtags en narratieven
-   - Community sentiment shifts t.o.v. vorige week
-
-2. FUNDAMENTELE DRIVERS
-   - Recente on-chain metrics en netwerk activiteit
-   - Technologische ontwikkelingen, upgrades, partnerships
-   - Institutionele adoptie signalen
-   - Regulatoire ontwikkelingen (positief/negatief)
-
-3. MACRO & MARKT CONTEXT
-   - Correlatie met BTC dominantie en brede cryptomarkt
-   - Impact van macro-economische factoren (rente, dollar, equities)
-   - Liquiditeit en marktdiepte signalen
-   - Institutionele flows en ETF/ETP activiteit indien van toepassing
-
-4. RISICO ASSESSMENT
-   - Belangrijkste downside risico's deze week
-   - Catalyst events die sentiment kunnen beinvloeden
-   - Technische niveaus die sentiment kunnen draaien
-
-5. CAMELOT FINANCE INSTITUTIONEEL STANDPUNT
-   - Positionering advies (Overweight/Neutral/Underweight) met rationale
-   - Tijdshorizon: 1 week outlook
-   - Confidence level in de analyse
-
-KRITISCH: Wees eerlijk en onafhankelijk. Als de markt in Fear zit, reflecteer dat.
-Geef geen kunstmatig positief sentiment. Institutionele beleggers hebben accurate data nodig.
-
-Geef je analyse UITSLUITEND als JSON terug zonder enige tekst erbuiten:
+    json_template = '''
 {
-  "score": <integer 0-100, VERANKERD aan de Fear & Greed Index hierboven>,
+  "score": "<integer 0-100, VERANKERD aan de Fear & Greed Index>",
   "signal": "<Extreme Fear|Fear|Mild Fear|Neutraal|Mild Greed|Greed|Extreme Greed>",
   "fng_reference": "<Hoe je score zich verhoudt tot de Fear & Greed Index en waarom>",
   "tweet_volume": "<schatting dagelijks volume>",
-  "bullish_ratio": <percentage bullish posts, integer>,
+  "bullish_ratio": "<percentage bullish posts, integer>",
   "trend_vs_last_week": "<Sterk Stijgend|Stijgend|Stabiel|Dalend|Sterk Dalend>",
   "positioning": "<Overweight|Neutral|Underweight>",
-  "confidence": <integer 1-100>,
-  "executive_summary": "<2-3 zinnen scherpe institutionele samenvatting voor C-suite, met concrete data>",
-  "social_analysis": "<3-4 zinnen diepgaande X/Twitter analyse met specifieke observaties>",
-  "fundamental_drivers": "<3-4 zinnen over on-chain metrics, technologie en adoptie>",
+  "confidence": "<integer 1-100>",
+  "executive_summary": "<2-3 zinnen institutionele samenvatting>",
+  "social_analysis": "<3-4 zinnen X/Twitter analyse>",
+  "fundamental_drivers": "<3-4 zinnen over on-chain metrics en adoptie>",
   "macro_context": "<2-3 zinnen macro en markt context>",
   "key_risks": ["<risico 1>", "<risico 2>", "<risico 3>"],
   "key_catalysts": ["<catalyst 1>", "<catalyst 2>", "<catalyst 3>"],
-  "camelot_view": "<2-3 zinnen Camelot Finance institutioneel standpunt en positionering rationale>",
+  "camelot_view": "<2-3 zinnen Camelot Finance institutioneel standpunt>",
   "kol_sentiment": "<Key Opinion Leaders sentiment samenvatting>",
   "institutional_signals": "<Institutionele adoptie en flow signalen>",
   "week_outlook": "<Concrete 1-week vooruitblik met scenario analyse>"
-}"""
+}'''
+
+    prompt = (
+        f"Je bent een senior Digital Assets Portfolio Manager bij Camelot Finance "
+        f"met 15 jaar ervaring. Analyseer {coin['full']} diepgaand.\n\n"
+        + fng_anchor +
+        "\n\nAnalyseer exhaustief:\n"
+        "1. SOCIAL SENTIMENT (X/Twitter): volume, toon, KOLs, trending narratieven\n"
+        "2. FUNDAMENTELE DRIVERS: on-chain metrics, technologie, institutionele adoptie, regulatie\n"
+        "3. MACRO & MARKT CONTEXT: BTC correlatie, macro-economie, ETF flows\n"
+        "4. RISICO ASSESSMENT: downside risicos, catalyst events, technische niveaus\n"
+        "5. CAMELOT FINANCE STANDPUNT: Overweight/Neutral/Underweight met rationale\n\n"
+        "KRITISCH: Wees eerlijk. Als de markt in Fear zit, reflecteer dat.\n"
+        "Geef UITSLUITEND geldige JSON terug zonder tekst erbuiten:\n"
+        + json_template
+    )
 
     response = client.messages.create(
         model="claude-sonnet-4-20250514",
@@ -148,6 +127,13 @@ Geef je analyse UITSLUITEND als JSON terug zonder enige tekst erbuiten:
     text = text.replace("```json", "").replace("```", "").strip()
     s, e = text.find("{"), text.rfind("}")
     result = json.loads(text[s:e+1])
+    # Zorg dat numerieke velden integers zijn
+    for field in ["score", "bullish_ratio", "confidence"]:
+        if field in result:
+            try:
+                result[field] = int(str(result[field]).replace('"', '').strip())
+            except:
+                result[field] = 50 if field == "score" else 70
     result["coin"]   = coin["full"]
     result["symbol"] = coin["symbol"]
     result["date"]   = datetime.date.today().isoformat()
